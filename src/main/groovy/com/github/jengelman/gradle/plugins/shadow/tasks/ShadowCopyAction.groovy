@@ -334,7 +334,12 @@ class ShadowCopyAction implements CopyAction {
          */
         private void remapClass(InputStream classInputStream, String path, long lastModified) {
             InputStream is = classInputStream
-            ClassReader cr = new ClassReader(is)
+            ClassReader cr;
+            try {
+                cr = new ClassReader(is);
+            } catch (Throwable ise) {
+                throw new GradleException("Error in ASM reading class " + path, ise);
+            }
 
             // We don't pass the ClassReader here. This forces the ClassWriter to rebuild the constant pool.
             // Copying the original constant pool should be avoided because it would keep references
